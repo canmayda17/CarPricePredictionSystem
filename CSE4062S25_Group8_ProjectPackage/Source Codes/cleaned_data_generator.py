@@ -1,0 +1,26 @@
+import pandas as pd
+
+# This file generates cleaned data without need of reimplement all of them
+df = pd.read_csv("data.csv")
+df.drop(columns=['Unnamed: 0', 'offer_description', 'registration_date'], inplace=True)
+df['color'] = df['color'].fillna('unknown')
+df['fuel_consumption_l_100km'] = df['fuel_consumption_l_100km'].str.replace(' l/100 km', '', regex=False)
+df['fuel_consumption_l_100km'] = df['fuel_consumption_l_100km'].str.replace(',', '.', regex=False)
+df['fuel_consumption_l_100km'] = pd.to_numeric(df['fuel_consumption_l_100km'], errors='coerce')
+df['fuel_consumption_g_km'] = df['fuel_consumption_g_km'].replace(r'-.*', pd.NA, regex=True)
+df['fuel_consumption_g_km'] = df['fuel_consumption_g_km'].str.replace(' g/km', '', regex=False)
+df['fuel_consumption_g_km'] = pd.to_numeric(df['fuel_consumption_g_km'], errors='coerce')
+df['price_in_euro'] = df['price_in_euro'].str.replace(' €', '', regex=False)
+df['price_in_euro'] = df['price_in_euro'].str.replace('.', '', regex=False)
+df['price_in_euro'] = pd.to_numeric(df['price_in_euro'], errors='coerce')
+df['power_kw'] = pd.to_numeric(df['power_kw'], errors='coerce')
+df['power_ps'] = pd.to_numeric(df['power_ps'], errors='coerce')
+df['fuel_consumption_l_100km'] = df['fuel_consumption_l_100km'].fillna(df['fuel_consumption_l_100km'].mean())
+df['fuel_consumption_g_km'] = df['fuel_consumption_g_km'].fillna(df['fuel_consumption_g_km'].mean())
+df['price_in_euro'] = df['price_in_euro'].fillna(df['price_in_euro'].mean())
+df['power_kw'] = df['power_kw'].fillna(df['power_kw'].mean())
+df['power_ps'] = df['power_ps'].fillna(df['power_ps'].mean())
+df['mileage_in_km'] = df['mileage_in_km'].fillna(df['mileage_in_km'].mean())
+
+df.to_csv("cleaned_data.csv", index=False, encoding='utf-8')
+
